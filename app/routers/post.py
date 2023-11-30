@@ -1,9 +1,8 @@
-from logging import raiseExceptions
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm.session import Session
 
-from .. import oauth2
+from ..auth import oauth2
 from ..db_models.database import get_db
 from ..db_models import models
 from ..schemas import schemas
