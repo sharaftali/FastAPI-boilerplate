@@ -1,7 +1,7 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, UUID4
 from datetime import datetime
 from typing import List, Optional
-
+from uuid import UUID
 from pydantic.types import conint
 
 
@@ -15,7 +15,7 @@ class PostCreate(PostBase):
 
 
 class Post(PostBase):
-    id: int
+    id: UUID4
 
     created_at: datetime
     owner_id: int
@@ -25,7 +25,7 @@ class Post(PostBase):
 
 
 class UserOut(BaseModel):
-    id: int
+    id: UUID4
     username: str
     email: EmailStr
     created_at: datetime
@@ -41,7 +41,7 @@ class UserCreate(BaseModel):
 
 
 class PostOut(BaseModel):
-    id: int
+    id: UUID4
     title: str
     content: str
     owner: UserOut
