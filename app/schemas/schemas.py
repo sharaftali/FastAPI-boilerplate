@@ -8,38 +8,37 @@ from pydantic.types import conint
 class PostBase(BaseModel):
     title: str
     content: str
+
+
 class PostCreate(PostBase):
     pass
-    
-
-
 
 
 class Post(PostBase):
     id: int
-    
+
     created_at: datetime
     owner_id: int
 
     class Config:
         orm_mode = True
 
-        
+
 class UserOut(BaseModel):
     id: int
     username: str
     email: EmailStr
-    created_at: datetime    
+    created_at: datetime
+
     class Config:
         orm_mode = True
-
-
 
 
 class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
+
 
 class PostOut(BaseModel):
     id: int
@@ -49,6 +48,7 @@ class PostOut(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -62,4 +62,3 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
-
