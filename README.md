@@ -8,8 +8,10 @@ A Fastapi boilerplate for backend dev
 4. create .env file and copy .env-example on it
 5. intall dependencies
   ``pip install -r requirements.txt``
-7. run migration
-  ``alembic upgrade head``
+7. run migration 
+   1. ``alembic revision --autogenerate -m "initial"``
+   2. ``alembic upgrade head``
+   3. ``alembic downgrade head``
 9. start the server with uvicorn
   ``uvicorn app.main:app --reload``
  - the server should be runing on 🍎 http://127.0.0.1:8000
