@@ -4,7 +4,7 @@ from .routers import post, user, auth, item
 
 # models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(title="Rental App")
 
 origins = ["*"]
 
