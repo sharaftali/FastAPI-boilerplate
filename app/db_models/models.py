@@ -1,11 +1,12 @@
 import uuid
-from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy import Column, String, ForeignKey, Float, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 
 from .database import Base
+from ..schemas.item_schemas import ItemStatus
 
 
 class Post(Base):
@@ -18,6 +19,17 @@ class Post(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
     owner = relationship("User")
+
+
+class Item(Base):
+    __tablename__ = "items"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    name = Column(String, nullable=False)
+    rate = Column(Float, nullable=False)
+    status = Column(Enum(ItemStatus), nullable=False, default=ItemStatus.AVAILABLE)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=text('now()'))
 
 
 class User(Base):
