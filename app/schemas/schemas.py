@@ -62,3 +62,10 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
+
+
+class UserID(BaseModel):
+    id: UUID4
+
+    class Config:
+        orm_mode = True

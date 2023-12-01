@@ -1,7 +1,8 @@
 from typing import List
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
-from .. import utils
+
+from ..controller.user import User
 from ..db_models import models as db_models
 from ..db_models.database import get_db
 from ..schemas import schemas
@@ -12,35 +13,27 @@ router = APIRouter(
 )
 
 
+user_obj = User()
+
+
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    # hash the password - user.password
-    hashed_password = utils.hash(user.password)
-    user.password = hashed_password
-
-    new_user = db_models.User(**user.dict())
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-
-    return new_user
+    return user_obj.create_user(db=db, user=user)
 
 
 @router.get('/{id}', response_model=schemas.UserOut)
-def get_user(id: int, db: Session = Depends(get_db), ):
-    user = db.query(db_models.User).filter(db_models.User.id == id).first()
-    if not user:
+def get_user(UserID: schemas.UserID, db: Session = Depends(get_db), ):
+    if user := user_obj.get_user(db=db, user=UserID):
+        return user
+    else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"User with id: {id} does not exist")
-
-    return user
 
 
 @router.get('/', response_model=List[schemas.UserOut])
 def get_user_all(db: Session = Depends(get_db)):
-    user = db.query(db_models.User).all()
-    if not user:
+    if user := user_obj.get_user_all(db=db):
+        return user
+    else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=" no user for now")
-
-    return user
