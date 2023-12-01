@@ -24,38 +24,34 @@ def get_lists(db: Session = Depends(get_db), current_user: int = Depends(oauth2.
 
 
 @router.post("/", response_model=ItemOut)
-def post_list(create_item: BaseItem, db: Session = Depends(get_db),
-              current_user: int = Depends(oauth2.get_current_user)):
+def create_item(create_item: BaseItem, db: Session = Depends(get_db),
+                current_user: int = Depends(oauth2.get_current_user)):
     return item.create_item(db=db, data=create_item)
-#
-#
-# @router.get("/{id}")
-# def get_post_by_id(id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
-#     post = db.query(db_models.Post).filter(db_models.Post.id == id).first()
-#     if post is None:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-#                             detail=f"post with id {id} not found")
-#     return post
-#
-#
-# @router.put("/{id}", status_code=status.HTTP_200_OK)
-# def update_list(id: int, updated_list: schemas.PostCreate, db: Session = Depends(get_db),
-#                 current_user: int = Depends(oauth2.get_current_user)):
-#     post_query = db.query(db_models.Post).filter(db_models.Post.id == id)
-#     post = post_query.first()
-#     if post is None:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id {id} not found")
-#     post_query.update(updated_list.dict(), synchronize_session=False)
-#     db.commit()
-#     return post_query.first()
-#
-#
-# @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-# def delete_list(id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
-#     post_query = db.query(db_models.Post).filter(db_models.Post.id == id)
-#     post = post_query.first()
-#     if post is None:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id {id} not found")
-#     post_query.delete(synchronize_session=False)
-#     db.commit()
-#     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/{id}", response_model=ItemOut)
+def get_item_by_id(id: str, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+    data = item.get_item_by_id(id=id, db=db)
+    if data is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"item with id {id} not found"
+        )
+    return data
+
+
+@router.put("/{id}", response_model=ItemOut)
+def update_item_by_id(id: str, updated_data: BaseItem, db: Session = Depends(get_db),
+                      current_user: int = Depends(oauth2.get_current_user)):
+    data = item.update_item_by_id(id=id, data=updated_data, db=db)
+    if data is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Item with id {id} not found")
+    return data
+
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_item(id: str, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+    data = item.delete_item(id=id, db=db)
+    if data is False:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"item with id {id} not found")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
